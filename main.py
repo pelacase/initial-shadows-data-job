@@ -12,11 +12,12 @@ bucket_name = 'lomi-shadow-update-production'
 CUTOFF_DATE = datetime(2023, 10, 15, tzinfo=pytz.UTC)
 
 s3_objects = {}
-
+reject = 0
 paginator = s3.get_paginator('list_objects_v2')
 for page in paginator.paginate(Bucket=bucket_name):
     files = page.get('Contents', [])
     for obj in files:
+        print(len(s3_objects), reject)
         last_modified = obj['LastModified']
         if last_modified > CUTOFF_DATE:
             if last_modified.year not in s3_objects:
@@ -28,6 +29,8 @@ for page in paginator.paginate(Bucket=bucket_name):
             if last_modified.hour not in s3_objects[last_modified.year][last_modified.month][last_modified.day]:
                 s3_objects[last_modified.year][last_modified.month][last_modified.day][last_modified.hour] = []
             s3_objects[last_modified.year][last_modified.month][last_modified.day][last_modified.hour].append(obj)
+        else:
+            reject += 1
 
 for year in s3_objects:
     for month in s3_objects[year]:
@@ -41,6 +44,6 @@ for year in s3_objects:
                     with_recieved_time = s3_object_as_string[:-1] + f', "receivedtime": "{obj["LastModified"].isoformat()}"}}'
                     hour_string += with_recieved_time
                     filename = f"output/year={year}/month={month}/day={day}/lomi-shadow-redshift-production-1-{year}-{month}-{day}-{hour}-00-{uuid.uuid4()}"
-                    with open(filename, "w") as f:
-                        f.write(hour_string)
-                        print(f"written {filename}")
+                with open(filename, "w") as f:
+                    f.write(hour_string)
+                    print(f"written {filename}")
