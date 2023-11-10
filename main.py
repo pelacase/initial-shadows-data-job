@@ -13,7 +13,7 @@ CUTOFF_DATE = datetime(2023, 10, 15, tzinfo=pytz.UTC)
 
 s3_objects = {}
 paginator = s3.get_paginator('list_objects_v2')
-for page in paginator.paginate(Bucket=bucket_name, PaginationConfig={'MaxItems': 10000}):
+for page in paginator.paginate(Bucket=bucket_name):
     files = page.get('Contents', [])
     for obj in files:
         last_modified = obj['LastModified']
