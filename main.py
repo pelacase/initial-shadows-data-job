@@ -13,7 +13,7 @@ CUTOFF_DATE = datetime(2023, 10, 15, tzinfo=pytz.UTC)
 
 s3_objects = {}
 paginator = s3.get_paginator('list_objects_v2')
-for page in paginator.paginate(Bucket=bucket_name):
+for page in paginator.paginate(Bucket=bucket_name, PaginationConfig={'MaxItems': 10000}):
     files = page.get('Contents', [])
     for obj in files:
         last_modified = obj['LastModified']
@@ -37,7 +37,7 @@ for year in s3_objects:
                 for obj in s3_objects[year][month][day][hour]:
                     s3_object = s3.get_object(Bucket=bucket_name, Key=obj['Key'])
                     s3_object_as_string = s3_object['Body'].read().decode('utf-8')
-                    with_recieved_time = s3_object_as_string[:-1] + f', "receivedtime": "{obj["LastModified"].isoformat()}"}}'
+                    with_recieved_time = s3_object_as_string[:-1] + f', "receivedtime": "{obj["LastModified"].isoformat()}"}}\n'
                     hour_string += with_recieved_time
                 filename = f"output/year={year}/month={month}/day={day}/lomi-shadow-redshift-production-1-{year}-{month}-{day}-{hour}-00-{uuid.uuid4()}"
                 with open(filename, "w") as f:
