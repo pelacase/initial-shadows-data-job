@@ -1,11 +1,19 @@
 pipeline {
-    agent any
+    triggers {
+        githubPush()
+    }
+    agent {
+        node {
+            label 'shadow-jobs'
+        }
+    }
 
     stages {
         stage('Run Script') {
             steps {
                 script {
-                    sh './script.sh'
+                    sh 'python3 main.py'
+                    sh 'aws s3 sync ./output s3://pelabenbucket'
                 }
             }
         }
