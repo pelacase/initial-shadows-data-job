@@ -12,7 +12,7 @@ pipeline {
         stage('Run Script') {
             steps {
                 script {
-                    sh 'pip install -r requirements.txt'
+                    sh 'python -m pip install -r requirements.txt'
                     sh 'python3 main.py'
                     sh 'aws s3 sync ./output s3://pelabenbucket'
                 }
