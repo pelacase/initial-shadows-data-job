@@ -12,7 +12,7 @@ pipeline {
         stage('Run Script') {
             steps {
                 script {
-                    sh 'python3 -m ensurepip --upgrade'
+                    sh 'apt-get install python3-pip'
                     sh 'python3 -m pip install -r requirements.txt'
                     sh 'python3 main.py'
                     sh 'aws s3 sync ./output s3://pelabenbucket'
