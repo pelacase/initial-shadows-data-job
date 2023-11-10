@@ -34,9 +34,11 @@ for year in s3_objects:
         for day in s3_objects[year][month]:
             os.makedirs(f"output/year={year}/month={month}/day={day}")
             for hour in s3_objects[year][month][day]:
-                hour_bytes = b''
+                hour_string = ""
                 for obj in s3_objects[year][month][day][hour]:
                     s3_object = s3.get_object(Bucket=bucket_name, Key=obj['Key'])
-                    hour_bytes += s3_object['Body'].read()
-                    with open(f"output/year={year}/month={month}/day={day}/lomi-shadow-redshift-production-1-{year}-{month}-{day}-{hour}-00-{uuid.uuid4()}", "wb") as f:
-                        f.write(hour_bytes)
+                    s3_object_as_string = s3_object['Body'].read().decode('utf-8')
+                    with_recieved_time = s3_object_as_string[:-1] + f', "receivedtime": "{obj["LastModified"].isoformat()}"}}'
+                    hour_string += with_recieved_time
+                    with open(f"output/year={year}/month={month}/day={day}/lomi-shadow-redshift-production-1-{year}-{month}-{day}-{hour}-00-{uuid.uuid4()}", "w") as f:
+                        f.write(hour_string)
