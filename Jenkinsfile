@@ -4,7 +4,7 @@ pipeline {
     }
     agent {
         node {
-            label 'shadow-jobs'
+            label 'debian-awscli'
         }
     }
 
