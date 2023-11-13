@@ -12,6 +12,7 @@ pipeline {
         stage('Run Script') {
             steps {
                 script {
+                    sh 'rm -rf ./output'
                     sh 'apt-get update'
                     sh 'apt-get -y install python3-pip'
                     sh 'python3 -m pip install -r requirements.txt'
