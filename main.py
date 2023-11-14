@@ -33,7 +33,7 @@ for page in paginator.paginate(Bucket=bucket_name):
 for year in s3_objects:
     for month in s3_objects[year]:
         for day in s3_objects[year][month]:
-            os.makedirs(f"output/year={year}/month={month}/day={day}")
+            os.makedirs(f"output2/year={year}/month={month}/day={day}")
             for hour in s3_objects[year][month][day]:
                 hour_string = ""
                 for obj in s3_objects[year][month][day][hour]:
