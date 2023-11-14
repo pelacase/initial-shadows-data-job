@@ -43,7 +43,7 @@ for year in s3_objects:
                     if not has_time:
                         with_recieved_time = s3_object_as_string[:-1] + f', "receivedtime": "{obj["LastModified"].isoformat()}"}}\n'
                     else:
-                        with_recieved_time = s3_object_as_string
+                        with_recieved_time = s3_object_as_string + "\n"
                     hour_string += with_recieved_time
                 filename = f"output2/year={year}/month={month}/day={day}/lomi-shadow-redshift-production-1-{year}-{month}-{day}-{hour}-00-{uuid.uuid4()}"
                 with open(filename, "w") as f:
